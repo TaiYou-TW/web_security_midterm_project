@@ -1,0 +1,33 @@
+version: "2"
+services:
+    web:
+        container_name: nginx
+        image: nginx
+        volumes:
+            - ./templates:/etc/nginx/templates
+            - ./www:/var/www/html/
+        ports:
+            - "8080:80"
+        environment:
+            - NGINX_HOST=fongyehong.studio
+            - NGINX_PORT=8080
+    db:
+        container_name: mysql
+        image: mysql:5.7
+        environment:
+            MYSQL_DATABASE: ws
+            MYSQL_USER: user
+            MYSQL_PASSWORD: ""
+            MYSQL_ROOT_PASSWORD: ""
+        volumes:
+            - ./db:/docker-entrypoint-initdb.d
+        ports:
+            - "8081:3306"
+        hostname: fongyehong.studio
+    php:
+        build: ./image
+        container_name: php
+        ports:
+            - 9000
+        volumes:
+            - "./www:/var/www/html/"

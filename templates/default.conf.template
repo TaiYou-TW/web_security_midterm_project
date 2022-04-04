@@ -1,0 +1,30 @@
+server {
+	listen 80 default_server;
+	listen [::]:80 default_server;
+
+	root /var/www/html;
+
+	index index.php index.html index.htm;
+	
+	access_log /var/log/nginx/main_access.log;
+	error_log /var/log/nginx/main_error.log;
+
+	server_name _;
+
+	server_tokens off;
+	proxy_hide_header X-Powered-By;
+
+	location ~ /\.git {
+		return 404;
+	}
+
+	location ~ \.php$ {
+	   try_files $uri =404;
+	   include fastcgi_params;
+	   fastcgi_split_path_info ^(.+\.php)(/.+)$;
+	   fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+	   fastcgi_param PATH_INFO $fastcgi_path_info;
+	   fastcgi_index index.php;
+	   fastcgi_pass php:9000;
+	}
+}
