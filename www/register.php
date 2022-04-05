@@ -1,8 +1,10 @@
 <?php
+
 include('config.php');
+include('header.php');
 
 if (isset($_SESSION['account'])) { // redirect
-    $message = "<meta http-equiv=\"refresh\" content=\"0;url=/\">";
+    $message = REDIRECT_TO_INDEX;
 } elseif (isset($_POST['account']) && isset($_POST['password'])) { // register
     $stat = $link->prepare('SELECT * FROM users WHERE `account` = ?');
     $stat->bind_param('s', $_POST['account']);
@@ -18,7 +20,7 @@ if (isset($_SESSION['account'])) { // redirect
         $stat->execute();
 
         $_SESSION['account'] = $_POST['account'];
-        $message = "<meta http-equiv=\"refresh\" content=\"0;url=/\">";
+        $message = REDIRECT_TO_INDEX;
     }
 }
 

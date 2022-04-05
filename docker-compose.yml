@@ -6,6 +6,8 @@ services:
         volumes:
             - ./templates:/etc/nginx/templates
             - ./www:/var/www/html/
+            - ./log:/var/log/nginx/
+            - ./uploads:/uploads/
         ports:
             - "8080:80"
         environment:
@@ -17,8 +19,9 @@ services:
         environment:
             MYSQL_DATABASE: ws
             MYSQL_USER: user
-            MYSQL_PASSWORD: ""
-            MYSQL_ROOT_PASSWORD: ""
+            MYSQL_PASSWORD: "6c%^g5p3LfiR^"
+            MYSQL_ROOT_PASSWORD: "5Q&E^3Nrs^t&ie94"
+            TZ: Asia/Taipei
         volumes:
             - ./db:/docker-entrypoint-initdb.d
         ports:
@@ -31,3 +34,4 @@ services:
             - 9000
         volumes:
             - "./www:/var/www/html/"
+            - "./configs/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini"

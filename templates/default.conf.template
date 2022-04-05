@@ -14,6 +14,8 @@ server {
 	server_tokens off;
 	proxy_hide_header X-Powered-By;
 
+	client_max_body_size 10M;
+
 	location ~ /\.git {
 		return 404;
 	}
