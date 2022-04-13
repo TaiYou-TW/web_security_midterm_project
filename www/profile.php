@@ -13,11 +13,9 @@ if (!isLoggedIn()) {
             $filename = generateUploadFileName(basename($_POST['url']), AVATARS_DIR);
 
             if (file_put_contents($filename, file_get_contents($_POST['url'])) && isLegalPng($filename)) {
-                unlink($user['avatar_path']);
                 updateAvatar($user['id'], $filename);
                 $message = REFRESH;
             } else {
-                unlink($filename);
                 $message = '上傳失敗';
             }
         }
@@ -28,11 +26,9 @@ if (!isLoggedIn()) {
         } else {
             $uploadfile = generateUploadFileName($_FILES['file']['name'], AVATARS_DIR);
             if (move_uploaded_file($_FILES['file']['tmp_name'], $uploadfile) && isLegalPng($uploadfile)) {
-                unlink($user['avatar_path']);
                 updateAvatar($user['id'], $uploadfile);
                 $message = REFRESH;
             } else {
-                unlink($uploadfile);
                 $message = '上傳失敗';
             }
         }
@@ -60,7 +56,7 @@ if (!isLoggedIn()) {
         </div>
         <div class="mb-3">
             <label for="formFile" class="form-label">或上傳圖片</label>
-            <input class="form-control" name="file" type="file" id="formFile">
+            <input class="form-control" name="file" type="file" id="formFile" accept="image/png">
         </div>
         <div class="col-auto">
             <button type="submit" class="btn btn-primary mb-3">上傳</button>
