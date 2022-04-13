@@ -9,6 +9,9 @@ server {
 
 	index index.php index.html index.htm;
 	
+	log_format post_logs '[$time_local] "$request" $status '
+                     '$body_bytes_sent "$http_referer" '
+                     '"$http_user_agent" [$request_body]';
 	access_log /var/log/nginx/main_access.log;
 	error_log /var/log/nginx/main_error.log;
 
