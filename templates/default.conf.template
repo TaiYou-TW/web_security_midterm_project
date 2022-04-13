@@ -1,6 +1,9 @@
 server {
-	listen 80 default_server;
-	listen [::]:80 default_server;
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/nginx/ssl/live/fongyehong.studio/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/nginx/ssl/live/fongyehong.studio/privkey.pem; # managed by Certbot
+    #include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    #ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
 
 	root /var/www/html;
 
@@ -9,7 +12,7 @@ server {
 	access_log /var/log/nginx/main_access.log;
 	error_log /var/log/nginx/main_error.log;
 
-	server_name _;
+	server_name ${NGINX_HOST};
 
 	server_tokens off;
 	proxy_hide_header X-Powered-By;
@@ -29,4 +32,19 @@ server {
 	   fastcgi_index index.php;
 	   fastcgi_pass php:9000;
 	}
+}
+
+server {
+    listen 80;
+
+    server_name ${NGINX_HOST};
+	server_tokens off;
+
+	location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+	location / {
+        return 301 https://$host$request_uri;
+    }
 }

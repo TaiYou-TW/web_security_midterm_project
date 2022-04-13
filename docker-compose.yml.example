@@ -1,4 +1,4 @@
-version: "2"
+version: "3"
 services:
     web:
         container_name: nginx
@@ -8,25 +8,33 @@ services:
             - ./www:/var/www/html/
             - ./log:/var/log/nginx/
             - ./uploads:/uploads/
+            - ./certbot/www/:/var/www/certbot/:ro
+            - ./certbot/conf/:/etc/nginx/ssl/:ro
         ports:
-            - "8080:80"
+            - "80:80"
+            - "443:443"
         environment:
-            - NGINX_HOST=fongyehong.studio
-            - NGINX_PORT=8080
+            - NGINX_HOST=
+
+    certbot:
+        image: certbot/certbot:latest
+        volumes:
+        - ./certbot/www/:/var/www/certbot/:rw
+        - ./certbot/conf/:/etc/letsencrypt/:rw
     db:
         container_name: mysql
         image: mysql:5.7
         environment:
             MYSQL_DATABASE: ws
             MYSQL_USER: user
-            MYSQL_PASSWORD: "6c%^g5p3LfiR^"
-            MYSQL_ROOT_PASSWORD: "5Q&E^3Nrs^t&ie94"
+            MYSQL_PASSWORD:
+            MYSQL_ROOT_PASSWORD:
             TZ: Asia/Taipei
         volumes:
             - ./db:/docker-entrypoint-initdb.d
         ports:
             - "8081:3306"
-        hostname: fongyehong.studio
+        hostname:
     php:
         build: ./image
         container_name: php
