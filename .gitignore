@@ -1,1 +1,9 @@
-db/*
+log/
+certbot/
+www/uploads/*
+!www/uploads/.gitkeep
+www/avatars/*
+!www/avatars/.gitkeep
+
+.env.php
+docker-compose.yml
