@@ -1,9 +1,8 @@
 <?php
-include('config.php');
 
-if (isset($_SESSION['account'])) {
-    unset($_SESSION['account']);
-}
+include('helper.php');
+
+clearAccountSession();
 
 ?>
 <meta http-equiv="refresh" content="0;url=/">

@@ -1,11 +1,6 @@
 <?php
 
-include('config.php');
 include('header.php');
-
-$stat = $link->prepare('SELECT * FROM messages LEFT JOIN users on messages.by_user_id=users.id ORDER BY messages.created_at ASC');
-$stat->execute();
-$result = $stat->get_result()->fetch_all(MYSQLI_BOTH);
 
 ?>
 <div class="container">
@@ -21,7 +16,7 @@ $result = $stat->get_result()->fetch_all(MYSQLI_BOTH);
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($result as $key => $value) : ?>
+            <?php foreach (getMessages() as $key => $value) : ?>
                 <tr>
                     <td><?= $value['account']; ?></td>
                     <td>
@@ -39,19 +34,21 @@ $result = $stat->get_result()->fetch_all(MYSQLI_BOTH);
             <?php endforeach; ?>
         </tbody>
     </table>
-    <hr>
-    <h2>留言</h2>
-    <form action="message.php" method="post" enctype="multipart/form-data">
-        <div class="mb-3">
-            <label for="exampleFormControlTextarea1" class="form-label">留言內容</label>
-            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" style="resize:none"></textarea>
-        </div>
-        <div class="mb-3">
-            <label for="formFile" class="form-label">上傳檔案</label>
-            <input class="form-control" type="file" id="formFile">
-        </div>
-        <div class="col-auto">
-            <button type="submit" class="btn btn-primary mb-3">留言</button>
-        </div>
-    </form>
+    <?php if ($user) : ?>
+        <hr>
+        <h2>留言</h2>
+        <form action="message.php" method="post" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="exampleFormControlTextarea1" class="form-label">留言內容</label>
+                <textarea class="form-control" name="content" id="exampleFormControlTextarea1" rows="3" style="resize:none"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="formFile" class="form-label">上傳檔案</label>
+                <input class="form-control" name="file" type="file" id="formFile">
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary mb-3">留言</button>
+            </div>
+        </form>
+    <?php endif ?>
 </div>
