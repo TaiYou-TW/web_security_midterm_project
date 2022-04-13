@@ -1,3 +1,7 @@
+log_format post_logs '[$time_local] "$request" $status '
+	'$body_bytes_sent "$http_referer" '
+	'"$http_user_agent" [$request_body]';
+
 server {
     listen 443 ssl; # managed by Certbot
     ssl_certificate /etc/nginx/ssl/live/fongyehong.studio/fullchain.pem; # managed by Certbot
@@ -48,7 +52,3 @@ server {
         return 301 https://$host$request_uri;
     }
 }
-
-log_format post_logs '[$time_local] "$request" $status '
-	'$body_bytes_sent "$http_referer" '
-	'"$http_user_agent" [$request_body]';
