@@ -60,7 +60,7 @@ function getMessage(int $id): array|null
 function getMessages(): array|null
 {
     global $link;
-    $stat = $link->prepare('SELECT * FROM messages LEFT JOIN users on messages.by_user_id=users.id AND messages.`deleted_at` IS NULL ORDER BY messages.created_at ASC');
+    $stat = $link->prepare('SELECT * FROM messages LEFT JOIN users on messages.by_user_id=users.id WHERE messages.`deleted_at` IS NULL ORDER BY messages.created_at ASC');
     $stat->execute();
     return $stat->get_result()->fetch_all(MYSQLI_BOTH);
 }
