@@ -27,9 +27,11 @@ try {
     $link->set_charset("utf8mb4");
 
     if (!$link) {
+        logError(mysqli_connect_error());
         die("ERROR: Could not connect. " . mysqli_connect_error());
     }
 } catch (Exception $exception) {
+    logError($exception->getMessage());
     die("ERROR: Server error QQ");
 }
 

@@ -16,134 +16,194 @@ function isLoggedInAdmin(): bool
 
 function getNowUser(): array|null
 {
-    global $link;
-    if (isset($_SESSION['account'])) {
-        $stat = $link->prepare('SELECT * FROM users WHERE `account` = ?');
-        $stat->bind_param('s', $_SESSION['account']);
-        $stat->execute();
-        $user = $stat->get_result()->fetch_assoc();
+    try {
+        global $link;
+        if (isset($_SESSION['account'])) {
+            $stat = $link->prepare('SELECT * FROM users WHERE `account` = ?');
+            $stat->bind_param('s', $_SESSION['account']);
+            $stat->execute();
+            $user = $stat->get_result()->fetch_assoc();
 
-        if (!$user) {
-            clearAccountSession();
+            if (!$user) {
+                clearAccountSession();
+            }
+            return $user;
         }
-        return $user;
+        return null;
+    } catch (\Throwable $th) {
+        logError($th->getMessage());
+        return null;
     }
-    return null;
 }
 
 function getTitle(): string
 {
-    global $link;
-    $stat = $link->prepare('SELECT * FROM settings WHERE `key` = "title"');
-    $stat->execute();
-    $result = $stat->get_result()->fetch_assoc();
-    return $result['value'] ?? DEFAULT_TITLE;
+    try {
+        global $link;
+        $stat = $link->prepare('SELECT * FROM settings WHERE `key` = "title"');
+        $stat->execute();
+        $result = $stat->get_result()->fetch_assoc();
+        return $result['value'] ?? DEFAULT_TITLE;
+    } catch (\Throwable $th) {
+        logError($th->getMessage());
+        return DEFAULT_TITLE;
+    }
 }
 
 function updateTitle(string $title): void
 {
-    global $link;
-    $stat = $link->prepare('UPDATE settings SET `value` = ? WHERE `key` = "title"');
-    $stat->bind_param('s', $title);
-    $stat->execute();
+    try {
+        global $link;
+        $stat = $link->prepare('UPDATE settings SET `value` = ? WHERE `key` = "title"');
+        $stat->bind_param('s', $title);
+        $stat->execute();
+    } catch (\Throwable $th) {
+        logError($th->getMessage());
+    }
 }
 
 function getMessage(int $id): array|null
 {
-    global $link;
-    $stat = $link->prepare('SELECT * FROM messages LEFT JOIN users on messages.by_user_id=users.id WHERE messages.`id` = ? AND messages.`deleted_at` IS NULL');
-    $stat->bind_param('i', $id);
-    $stat->execute();
-    return $stat->get_result()->fetch_all(MYSQLI_BOTH)[0] ?? null;
+    try {
+        global $link;
+        $stat = $link->prepare('SELECT * FROM messages LEFT JOIN users on messages.by_user_id=users.id WHERE messages.`id` = ? AND messages.`deleted_at` IS NULL');
+        $stat->bind_param('i', $id);
+        $stat->execute();
+        return $stat->get_result()->fetch_all(MYSQLI_BOTH)[0] ?? null;
+    } catch (\Throwable $th) {
+        logError($th->getMessage());
+        return null;
+    }
 }
 
 function getMessages(): array|null
 {
-    global $link;
-    $stat = $link->prepare('SELECT * FROM messages LEFT JOIN users on messages.by_user_id=users.id WHERE messages.`deleted_at` IS NULL ORDER BY messages.created_at ASC');
-    $stat->execute();
-    return $stat->get_result()->fetch_all(MYSQLI_BOTH);
+    try {
+        global $link;
+        $stat = $link->prepare('SELECT * FROM messages LEFT JOIN users on messages.by_user_id=users.id WHERE messages.`deleted_at` IS NULL ORDER BY messages.created_at ASC');
+        $stat->execute();
+        return $stat->get_result()->fetch_all(MYSQLI_BOTH);
+    } catch (\Throwable $th) {
+        logError($th->getMessage());
+        return null;
+    }
 }
 
 function isMyMessage(int $id): bool
 {
-    global $link;
-    $stat = $link->prepare('SELECT * FROM messages LEFT JOIN users on messages.by_user_id=users.id WHERE messages.`id` = ? AND messages.`deleted_at` IS NULL');
-    $stat->bind_param('i', $id);
-    $stat->execute();
-    $result = $stat->get_result()->fetch_all(MYSQLI_BOTH);
-    return isset($result[0]['account']) && $result[0]['account'] === $_SESSION['account'];
+    try {
+        global $link;
+        $stat = $link->prepare('SELECT * FROM messages LEFT JOIN users on messages.by_user_id=users.id WHERE messages.`id` = ? AND messages.`deleted_at` IS NULL');
+        $stat->bind_param('i', $id);
+        $stat->execute();
+        $result = $stat->get_result()->fetch_all(MYSQLI_BOTH);
+        return isset($result[0]['account']) && $result[0]['account'] === $_SESSION['account'];
+    } catch (\Throwable $th) {
+        logError($th->getMessage());
+        return false;
+    }
 }
 
 function deleteMessage(int $id): void
 {
-    global $link;
-    $now = date("Y-m-d H:i:s");
-    $stat = $link->prepare('UPDATE messages SET `deleted_at` = ? WHERE `id` = ?');
-    $stat->bind_param('si', $now, $id);
-    $stat->execute();
+    try {
+        global $link;
+        $now = date("Y-m-d H:i:s");
+        $stat = $link->prepare('UPDATE messages SET `deleted_at` = ? WHERE `id` = ?');
+        $stat->bind_param('si', $now, $id);
+        $stat->execute();
+    } catch (\Throwable $th) {
+        logError($th->getMessage());
+    }
 }
 
 function insertMessage(string $content, string $filename = null): void
 {
-    global $link, $user;
-    $authorId = $user['id'];
-    $content = htmlspecialchars($content);
+    try {
+        global $link, $user;
+        $authorId = $user['id'];
+        $content = htmlspecialchars($content);
 
-    if (is_null($filename)) {
-        $stat = $link->prepare('INSERT INTO messages (`content`, `by_user_id`) VALUES (?, ?)');
-        $stat->bind_param('si', $content, $authorId);
-    } else {
-        $stat = $link->prepare('INSERT INTO messages (`content`, `file_path`, `by_user_id`) VALUES (?, ?, ?)');
-        $stat->bind_param('ssi', $content, $filename, $authorId);
+        if (is_null($filename)) {
+            $stat = $link->prepare('INSERT INTO messages (`content`, `by_user_id`) VALUES (?, ?)');
+            $stat->bind_param('si', $content, $authorId);
+        } else {
+            $stat = $link->prepare('INSERT INTO messages (`content`, `file_path`, `by_user_id`) VALUES (?, ?, ?)');
+            $stat->bind_param('ssi', $content, $filename, $authorId);
+        }
+        $stat->execute();
+    } catch (\Throwable $th) {
+        logError($th->getMessage());
     }
-    $stat->execute();
 }
 
 function clearAccountSession(): void
 {
-    if (isset($_SESSION['account'])) {
-        unset($_SESSION['account']);
+    try {
+        if (isset($_SESSION['account'])) {
+            unset($_SESSION['account']);
+        }
+    } catch (\Throwable $th) {
+        logError($th->getMessage());
     }
 }
 
 function setAccountSession(string $account): void
 {
-    $_SESSION['account'] = $account;
+    try {
+        $_SESSION['account'] = $account;
+    } catch (\Throwable $th) {
+        logError($th->getMessage());
+    }
 }
 
 function login(string $account, string $password): bool
 {
-    global $link;
-    $stat = $link->prepare('SELECT * FROM users WHERE `account` = ?');
-    $stat->bind_param('s', $account);
-    $stat->execute();
-    $result = $stat->get_result()->fetch_assoc();
-    return $result && password_verify($password, $result['password']);
+    try {
+        global $link;
+        $stat = $link->prepare('SELECT * FROM users WHERE `account` = ?');
+        $stat->bind_param('s', $account);
+        $stat->execute();
+        $result = $stat->get_result()->fetch_assoc();
+        return $result && password_verify($password, $result['password']);
+    } catch (\Throwable $th) {
+        logError($th->getMessage());
+        return false;
+    }
 }
 
 function register(string $account, string $password): bool
 {
-    global $link;
-    if (isAccountExist($account)) {
+    try {
+        global $link;
+        if (isAccountExist($account)) {
+            return false;
+        }
+
+        $stat = $link->prepare('INSERT INTO users (`account`, `password`) VALUES (?, ?)');
+        $password = password_hash($password, PASSWORD_BCRYPT);
+        $stat->bind_param('ss', $account, $password);
+        $stat->execute();
+        return true;
+    } catch (\Throwable $th) {
+        logError($th->getMessage());
         return false;
     }
-
-    $stat = $link->prepare('INSERT INTO users (`account`, `password`) VALUES (?, ?)');
-    $password = password_hash($password, PASSWORD_BCRYPT);
-    $stat->bind_param('ss', $account, $password);
-    $stat->execute();
-    return true;
 }
 
 function isAccountExist(string $account): bool
 {
-    global $link;
-    $stat = $link->prepare('SELECT COUNT(id) FROM users WHERE `account` = ?');
-    $stat->bind_param('s', $_POST['account']);
-    $stat->execute();
-    $result = $stat->get_result()->fetch_all();
-    return $result[0][0] > 0;
+    try {
+        global $link;
+        $stat = $link->prepare('SELECT COUNT(id) FROM users WHERE `account` = ?');
+        $stat->bind_param('s', $account);
+        $stat->execute();
+        $result = $stat->get_result()->fetch_all();
+        return $result[0][0] > 0;
+    } catch (\Throwable $th) {
+        logError($th->getMessage());
+        return false;
+    }
 }
 
 function generateRandomString(int $length = 5): string
@@ -199,6 +259,7 @@ function isLegalPng(string $filename): bool
         $tmpImg = imagecreatetruecolor($width, $height);
         return imagecopyresized($tmpImg, $source, 0, 0, 0, 0, $width, $height, $width, $height);
     } catch (\Throwable $th) {
+        logError($th->getMessage());
         return false;
     }
 }
