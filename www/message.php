@@ -56,7 +56,7 @@ if (isLoggedIn() && isset($_POST['content']) && $_SERVER['REQUEST_METHOD'] === '
             <h3><a href="file.php?id=<?= $article[0]; ?>">下載附件</a></h3>
         <?php endif; ?>
 
-        <h3>留言時間：<?= $article[4]; ?></h3>
+        <h3>留言時間：<?= $article[5]; ?></h3>
     </div>
 <?php endif; ?>
 

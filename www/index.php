@@ -26,7 +26,7 @@ include('header.php');
                             <?= $value['content']; ?>
                         <?php endif; ?>
                     </td>
-                    <td><?= $value[4]; ?></td>
+                    <td><?= $value[5]; ?></td>
                     <td>
                         <a href="message.php?id=<?= $value[0] ?>" class="btn btn-secondary me-2" tabindex="-1" role="button">Detail</a>
                     </td>
