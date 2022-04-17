@@ -31,7 +31,7 @@ function getNowUser(): array|null
         }
         return null;
     } catch (\Throwable $th) {
-        logError($th->getMessage());
+        logError($th->getFile(), $th->getLine(), $th->getMessage(), $th->getTraceAsString());
         return null;
     }
 }
@@ -45,7 +45,7 @@ function getTitle(): string
         $result = $stat->get_result()->fetch_assoc();
         return $result['value'] ?? DEFAULT_TITLE;
     } catch (\Throwable $th) {
-        logError($th->getMessage());
+        logError($th->getFile(), $th->getLine(), $th->getMessage(), $th->getTraceAsString());
         return DEFAULT_TITLE;
     }
 }
@@ -58,7 +58,7 @@ function updateTitle(string $title): void
         $stat->bind_param('s', $title);
         $stat->execute();
     } catch (\Throwable $th) {
-        logError($th->getMessage());
+        logError($th->getFile(), $th->getLine(), $th->getMessage(), $th->getTraceAsString());
     }
 }
 
@@ -71,7 +71,7 @@ function getMessage(int $id): array|null
         $stat->execute();
         return $stat->get_result()->fetch_all(MYSQLI_BOTH)[0] ?? null;
     } catch (\Throwable $th) {
-        logError($th->getMessage());
+        logError($th->getFile(), $th->getLine(), $th->getMessage(), $th->getTraceAsString());
         return null;
     }
 }
@@ -84,7 +84,7 @@ function getMessages(): array|null
         $stat->execute();
         return $stat->get_result()->fetch_all(MYSQLI_BOTH);
     } catch (\Throwable $th) {
-        logError($th->getMessage());
+        logError($th->getFile(), $th->getLine(), $th->getMessage(), $th->getTraceAsString());
         return null;
     }
 }
@@ -99,7 +99,7 @@ function isMyMessage(int $id): bool
         $result = $stat->get_result()->fetch_all(MYSQLI_BOTH);
         return isset($result[0]['account']) && $result[0]['account'] === $_SESSION['account'];
     } catch (\Throwable $th) {
-        logError($th->getMessage());
+        logError($th->getFile(), $th->getLine(), $th->getMessage(), $th->getTraceAsString());
         return false;
     }
 }
@@ -113,7 +113,7 @@ function deleteMessage(int $id): void
         $stat->bind_param('si', $now, $id);
         $stat->execute();
     } catch (\Throwable $th) {
-        logError($th->getMessage());
+        logError($th->getFile(), $th->getLine(), $th->getMessage(), $th->getTraceAsString());
     }
 }
 
@@ -133,7 +133,7 @@ function insertMessage(string $content, string $filename = null): void
         }
         $stat->execute();
     } catch (\Throwable $th) {
-        logError($th->getMessage());
+        logError($th->getFile(), $th->getLine(), $th->getMessage(), $th->getTraceAsString());
     }
 }
 
@@ -144,7 +144,7 @@ function clearAccountSession(): void
             unset($_SESSION['account']);
         }
     } catch (\Throwable $th) {
-        logError($th->getMessage());
+        logError($th->getFile(), $th->getLine(), $th->getMessage(), $th->getTraceAsString());
     }
 }
 
@@ -153,7 +153,7 @@ function setAccountSession(string $account): void
     try {
         $_SESSION['account'] = $account;
     } catch (\Throwable $th) {
-        logError($th->getMessage());
+        logError($th->getFile(), $th->getLine(), $th->getMessage(), $th->getTraceAsString());
     }
 }
 
@@ -167,7 +167,7 @@ function login(string $account, string $password): bool
         $result = $stat->get_result()->fetch_assoc();
         return $result && password_verify($password, $result['password']);
     } catch (\Throwable $th) {
-        logError($th->getMessage());
+        logError($th->getFile(), $th->getLine(), $th->getMessage(), $th->getTraceAsString());
         return false;
     }
 }
@@ -186,7 +186,7 @@ function register(string $account, string $password): bool
         $stat->execute();
         return true;
     } catch (\Throwable $th) {
-        logError($th->getMessage());
+        logError($th->getFile(), $th->getLine(), $th->getMessage(), $th->getTraceAsString());
         return false;
     }
 }
@@ -201,7 +201,7 @@ function isAccountExist(string $account): bool
         $result = $stat->get_result()->fetch_all();
         return $result[0][0] > 0;
     } catch (\Throwable $th) {
-        logError($th->getMessage());
+        logError($th->getFile(), $th->getLine(), $th->getMessage(), $th->getTraceAsString());
         return false;
     }
 }
@@ -247,7 +247,7 @@ function updateAvatar(int $id, string $filename): void
         $stat->bind_param('si', $filename, $id);
         $stat->execute();
     } catch (\Throwable $th) {
-        logError($th->getMessage());
+        logError($th->getFile(), $th->getLine(), $th->getMessage(), $th->getTraceAsString());
     }
 }
 
@@ -259,7 +259,7 @@ function isLegalPng(string $filename): bool
         $tmpImg = imagecreatetruecolor($width, $height);
         return imagecopyresized($tmpImg, $source, 0, 0, 0, 0, $width, $height, $width, $height);
     } catch (\Throwable $th) {
-        logError($th->getMessage());
+        logError($th->getFile(), $th->getLine(), $th->getMessage(), $th->getTraceAsString());
         return false;
     }
 }
@@ -284,14 +284,15 @@ function logRequest(): void
         $stat->bind_param('ssssss', $method, $status, $url, $request_header, $reqeust_body, $response_header);
         $stat->execute();
     } catch (\Throwable $th) {
-        logError($th->getMessage());
+        logError($th->getFile(), $th->getLine(), $th->getMessage(), $th->getTraceAsString());
     }
 }
 
-function logError(string $msg): void
+function logError(string $file, string $line, string $msg, string $trace): void
 {
     if (!file_exists(LOG_FILE)) {
         fopen(LOG_FILE, 'w');
     }
-    error_log("$msg\n", 3, LOG_FILE);
+    $time = date("Y-m-d H:i:s");
+    error_log("[$time] [$file#$line] $msg\n$trace\n", 3, LOG_FILE);
 }
