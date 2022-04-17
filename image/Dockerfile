@@ -1,7 +1,9 @@
 FROM php:8.1-fpm
-RUN apt-get update -y && apt-get install -y libpng-dev && apt-get install -y libjpeg-dev
-RUN docker-php-ext-install mysqli
-RUN docker-php-ext-configure gd \
-            --prefix=/usr \
-            --with-jpeg
-RUN docker-php-ext-install gd
+RUN apt-get update \
+    && apt-get install -y \
+    libpng-dev \
+    libjpeg-dev \
+    && docker-php-ext-install mysqli \
+    && docker-php-ext-configure gd \
+    --with-jpeg \
+    && docker-php-ext-install gd

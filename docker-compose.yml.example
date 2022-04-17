@@ -38,7 +38,7 @@ services:
     php:
         build: ./image
         container_name: php
-        ports:
+        expose:
             - 9000
         volumes:
             - ./www:/var/www/html/
