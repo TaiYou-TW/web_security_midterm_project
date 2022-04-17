@@ -78,7 +78,7 @@ function isMyMessage(int $id): bool
 function deleteMessage(int $id): void
 {
     global $link;
-    $now = time();
+    $now = date("Y-m-d H:i:s");
     $stat = $link->prepare('UPDATE messages SET `deleted_at` = ? WHERE `id` = ?');
     $stat->bind_param('si', $now, $id);
     $stat->execute();
