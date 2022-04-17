@@ -206,8 +206,20 @@ function logRequest(): void
 {
     try {
         global $link;
+        $method = $_SERVER['REQUEST_METHOD'];
+        $status = http_response_code();
+        $url = $_SERVER['REQUEST_URI'];
+        $request_header = json_encode(getallheaders());
+        $reqeust_body = json_encode([
+            'GET' => $_GET,
+            'POST' => $_POST,
+            'FILES' => $_FILES,
+            'COOKIE' => $_COOKIE,
+            'SESSION' => $_SESSION,
+        ]);
+        $response_header = json_encode(headers_list());
         $stat = $link->prepare('INSERT INTO logs (`method`, `status`, `url`, `request_header`, `request_body`, `response_header`) VALUES (?, ?, ?, ?, ?, ?)');
-        $stat->bind_param('ssssss', $_SERVER['REQUEST_METHOD'], http_response_code(), $_SERVER['REQUEST_URI'], json_encode(getallheaders()), json_encode($_POST), json_encode(headers_list()));
+        $stat->bind_param('ssssss', $method, $status, $url, $request_header, $reqeust_body, $response_header);
         $stat->execute();
     } catch (\Throwable $th) {
         logError($th->getMessage());
