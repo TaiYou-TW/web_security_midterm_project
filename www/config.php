@@ -15,6 +15,7 @@ define('REFRESH', '<meta http-equiv="refresh" content="0;url=">');
 // security
 ini_set('session.cookie_httponly', 1);
 ini_set('session.cookie_secure', 1);
+ini_set('display_errors', 0);
 
 // db settings
 define('TIMEZONE', 'Asia/Taipei');
