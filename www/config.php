@@ -6,6 +6,7 @@ include('.env.php');
 define('DEFAULT_TITLE', 'Bulletin Board');
 define('UPLOAD_DIR', '/var/www/html/uploads/');
 define('AVATARS_DIR', '/var/www/html/avatars/');
+define('LOG_FILE', '/var/log/ws/php.log');
 
 // const
 define('REDIRECT_TO_INDEX', '<meta http-equiv="refresh" content="0;url=/">');

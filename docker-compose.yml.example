@@ -7,6 +7,7 @@ services:
             - ./templates:/etc/nginx/templates
             - ./www:/var/www/html/
             - ./log:/var/log/nginx/
+            - ./log:/var/log/ws/
             - ./uploads:/uploads/
             - ./certbot/www/:/var/www/certbot/:ro
             - ./certbot/conf/:/etc/nginx/ssl/:ro
