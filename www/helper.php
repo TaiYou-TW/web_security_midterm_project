@@ -202,7 +202,7 @@ function isLegalPng(string $filename): bool
     }
 }
 
-function log(string $msg): void
+function logError(string $msg): void
 {
     if (!file_exists(LOG_FILE)) {
         fopen(LOG_FILE, 'w');
