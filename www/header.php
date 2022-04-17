@@ -2,6 +2,8 @@
 
 include('helper.php');
 
+logRequest();
+
 $title = getTitle();
 $user = getNowUser();
 

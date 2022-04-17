@@ -186,7 +186,7 @@ function updateAvatar(int $id, string $filename): void
         $stat->bind_param('si', $filename, $id);
         $stat->execute();
     } catch (\Throwable $th) {
-        //throw $th;
+        logError($th->getMessage());
     }
 }
 
@@ -202,10 +202,22 @@ function isLegalPng(string $filename): bool
     }
 }
 
+function logRequest(): void
+{
+    try {
+        global $link;
+        $stat = $link->prepare('INSERT INTO logs (`method`, `status`, `url`, `request_header`, `request_body`, `response_header`) VALUES (?, ?, ?, ?, ?, ?)');
+        $stat->bind_param('ssssss', $_SERVER['REQUEST_METHOD'], http_response_code(), $_SERVER['REQUEST_URI'], json_encode(getallheaders()), json_encode($_POST), json_encode(headers_list()));
+        $stat->execute();
+    } catch (\Throwable $th) {
+        logError($th->getMessage());
+    }
+}
+
 function logError(string $msg): void
 {
     if (!file_exists(LOG_FILE)) {
         fopen(LOG_FILE, 'w');
     }
-    error_log($msg, 3, LOG_FILE);
+    error_log("$msg\n", 3, LOG_FILE);
 }

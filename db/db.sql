@@ -38,3 +38,15 @@ CREATE TABLE IF NOT EXISTS `settings` (
 INSERT INTO `settings` (`key`, `value`) VALUES
 	('title', 'Sun\'s bulletin board');
 
+CREATE TABLE IF NOT EXISTS `logs` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `method` varchar(10) DEFAULT NULL,
+  `status` varchar(3) DEFAULT NULL,
+  `url` varchar(255) DEFAULT NULL,
+  `request_header` mediumtext CHARACTER SET utf8mb4 DEFAULT NULL,
+  `request_body` mediumtext CHARACTER SET utf8mb4 DEFAULT NULL,
+  `response_header` mediumtext CHARACTER SET utf8mb4 DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
