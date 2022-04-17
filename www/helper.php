@@ -51,7 +51,7 @@ function updateTitle(string $title): void
 function getMessage(int $id): array|null
 {
     global $link;
-    $stat = $link->prepare('SELECT * FROM messages LEFT JOIN users on messages.by_user_id=users.id WHERE messages.`id` = ?');
+    $stat = $link->prepare('SELECT * FROM messages LEFT JOIN users on messages.by_user_id=users.id WHERE messages.`id` = ? AND messages.`deleted_at` != NULL');
     $stat->bind_param('i', $id);
     $stat->execute();
     return $stat->get_result()->fetch_all(MYSQLI_BOTH)[0] ?? null;
@@ -60,7 +60,7 @@ function getMessage(int $id): array|null
 function getMessages(): array|null
 {
     global $link;
-    $stat = $link->prepare('SELECT * FROM messages LEFT JOIN users on messages.by_user_id=users.id ORDER BY messages.created_at ASC');
+    $stat = $link->prepare('SELECT * FROM messages LEFT JOIN users on messages.by_user_id=users.id AND messages.`deleted_at` != NULL ORDER BY messages.created_at ASC');
     $stat->execute();
     return $stat->get_result()->fetch_all(MYSQLI_BOTH);
 }
@@ -68,7 +68,7 @@ function getMessages(): array|null
 function isMyMessage(int $id): bool
 {
     global $link;
-    $stat = $link->prepare('SELECT * FROM messages LEFT JOIN users on messages.by_user_id=users.id WHERE messages.`id` = ?');
+    $stat = $link->prepare('SELECT * FROM messages LEFT JOIN users on messages.by_user_id=users.id WHERE messages.`id` = ? AND messages.`deleted_at` != NULL');
     $stat->bind_param('i', $id);
     $stat->execute();
     $result = $stat->get_result()->fetch_all(MYSQLI_BOTH);
@@ -78,8 +78,9 @@ function isMyMessage(int $id): bool
 function deleteMessage(int $id): void
 {
     global $link;
-    $stat = $link->prepare('DELETE FROM messages WHERE `id` = ?');
-    $stat->bind_param('i', $id);
+    $now = time();
+    $stat = $link->prepare('UPDATE messages SET `deleted_at` = ? WHERE `id` = ?');
+    $stat->bind_param('si', $now, $id);
     $stat->execute();
 }
 

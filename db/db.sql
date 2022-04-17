@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS `messages` (
   `content` mediumtext CHARACTER SET utf8mb4 NOT NULL,
   `file_path` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,
   `by_user_id` int(11) NOT NULL DEFAULT '0',
+  `deleted_at` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
