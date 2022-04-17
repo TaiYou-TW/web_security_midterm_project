@@ -7,7 +7,6 @@ services:
             - ./templates:/etc/nginx/templates
             - ./www:/var/www/html/
             - ./log:/var/log/nginx/
-            - ./log:/var/log/ws/
             - ./uploads:/uploads/
             - ./certbot/www/:/var/www/certbot/:ro
             - ./certbot/conf/:/etc/nginx/ssl/:ro
@@ -42,5 +41,6 @@ services:
         ports:
             - 9000
         volumes:
-            - "./www:/var/www/html/"
-            - "./configs/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini"
+            - ./www:/var/www/html/
+            - ./log:/var/log/ws/
+            - ./configs/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
