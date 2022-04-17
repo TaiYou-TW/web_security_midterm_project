@@ -180,10 +180,14 @@ function isIdLegal(string $str): bool
 
 function updateAvatar(int $id, string $filename): void
 {
-    global $link;
-    $stat = $link->prepare('UPDATE users SET `avatar_path` = ? WHERE `id` = ?');
-    $stat->bind_param('si', $filename, $id);
-    $stat->execute();
+    try {
+        global $link;
+        $stat = $link->prepare('UPDATE users SET `avatar_path` = ? WHERE `id` = ?');
+        $stat->bind_param('si', $filename, $id);
+        $stat->execute();
+    } catch (\Throwable $th) {
+        //throw $th;
+    }
 }
 
 function isLegalPng(string $filename): bool
@@ -196,4 +200,12 @@ function isLegalPng(string $filename): bool
     } catch (\Throwable $th) {
         return false;
     }
+}
+
+function log(string $msg): void
+{
+    if (!file_exists(LOG_FILE)) {
+        fopen(LOG_FILE, 'w');
+    }
+    error_log($msg, 3, LOG_FILE);
 }
