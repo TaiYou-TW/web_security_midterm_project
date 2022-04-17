@@ -1,6 +1,7 @@
 <?php
 
 include('.env.php');
+include('enums.php');
 
 // config
 define('DEFAULT_TITLE', 'Bulletin Board');
