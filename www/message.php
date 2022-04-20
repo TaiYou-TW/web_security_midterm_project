@@ -47,7 +47,15 @@ if (isLoggedIn() && isset($_POST['content']) && $_SERVER['REQUEST_METHOD'] === '
             </form>
         <?php endif; ?>
 
-        <h3>作者：<?= $article['account']; ?></h3>
+        <h3>
+            作者：
+            <?php if ($article['avatar_path']) : ?>
+                <img class="avatar" src="<?= substr($article['avatar_path'], 14); ?>" alt="avatar">
+            <?php else : ?>
+                <img class="avatar" src="avatars/default.png" alt="avatar">
+            <?php endif; ?>
+            <?= $article['account']; ?>
+        </h3>
         <h3>內容：</h3>
         <span id="content"><?= nl2br($article['content']); ?></span>
         <br><br>

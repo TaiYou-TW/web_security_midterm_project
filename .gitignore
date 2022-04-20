@@ -4,6 +4,7 @@ www/uploads/*
 !www/uploads/.gitkeep
 www/avatars/*
 !www/avatars/.gitkeep
+!www/avatars/default.png
 
 .env.php
 docker-compose.yml

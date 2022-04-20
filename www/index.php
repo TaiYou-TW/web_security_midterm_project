@@ -18,7 +18,14 @@ include('header.php');
         <tbody>
             <?php foreach (getMessages() as $key => $value) : ?>
                 <tr>
-                    <td><?= $value['account']; ?></td>
+                    <td>
+                        <?php if ($value['avatar_path']) : ?>
+                            <img class="avatar" src="<?= substr($value['avatar_path'], 14); ?>" alt="avatar">
+                        <?php else : ?>
+                            <img class="avatar" src="avatars/default.png" alt="avatar">
+                        <?php endif; ?>
+                        <?= $value['account']; ?>
+                    </td>
                     <td>
                         <?php if (strlen($value['content']) > 15) : ?>
                             <?= substr($value['content'], 0, 15) . "..."; ?>
