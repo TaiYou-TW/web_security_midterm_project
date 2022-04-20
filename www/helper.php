@@ -256,6 +256,9 @@ function isLegalPng(string $filename): bool
     try {
         list($width, $height) = getimagesize($filename);
         $source = imagecreatefrompng($filename);
+        if (!$source) {
+            return false;
+        }
         $tmpImg = imagecreatetruecolor($width, $height);
         return imagecopyresized($tmpImg, $source, 0, 0, 0, 0, $width, $height, $width, $height);
     } catch (\Throwable $th) {
