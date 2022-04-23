@@ -43,10 +43,10 @@ function getTitle(): string
         $stat = $link->prepare('SELECT * FROM settings WHERE `key` = "title"');
         $stat->execute();
         $result = $stat->get_result()->fetch_assoc();
-        return $result['value'] ?? DEFAULT_TITLE;
+        return htmlspecialchars($result['value'] ?? DEFAULT_TITLE);
     } catch (\Throwable $th) {
         logError($th->getFile(), $th->getLine(), $th->getMessage(), $th->getTraceAsString());
-        return DEFAULT_TITLE;
+        return htmlspecialchars(DEFAULT_TITLE);
     }
 }
 

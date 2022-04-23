@@ -24,7 +24,7 @@ include('header.php');
                         <?php else : ?>
                             <img class="avatar" src="avatars/default.png" alt="avatar">
                         <?php endif; ?>
-                        <?= $value['account']; ?>
+                        <?= htmlspecialchars($value['account']); ?>
                     </td>
                     <td>
                         <?php if (strlen($value['content']) > 15) : ?>
