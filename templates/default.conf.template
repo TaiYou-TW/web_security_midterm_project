@@ -27,6 +27,10 @@ server {
 		return 404;
 	}
 
+	location ~ /uploads {
+		return 404;
+	}
+
 	location ~ \.php$ {
 	   try_files $uri =404;
 	   include fastcgi_params;
