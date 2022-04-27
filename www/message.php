@@ -54,7 +54,7 @@ if (isLoggedIn() && isset($_POST['content']) && $_SERVER['REQUEST_METHOD'] === '
             <?php else : ?>
                 <img class="avatar" src="avatars/default.png" alt="avatar">
             <?php endif; ?>
-            <?= htmlspecialchars($article['account']); ?>
+            <?= filterString($article['account']); ?>
         </h3>
         <h3>內容：</h3>
         <span id="content"><?= nl2br($article['content']); ?></span>

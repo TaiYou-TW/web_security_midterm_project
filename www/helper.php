@@ -43,10 +43,10 @@ function getTitle(): string
         $stat = $link->prepare('SELECT * FROM settings WHERE `key` = "title"');
         $stat->execute();
         $result = $stat->get_result()->fetch_assoc();
-        return htmlspecialchars($result['value'] ?? DEFAULT_TITLE);
+        return filterString($result['value'] ?? DEFAULT_TITLE);
     } catch (\Throwable $th) {
         logError($th->getFile(), $th->getLine(), $th->getMessage(), $th->getTraceAsString());
-        return htmlspecialchars(DEFAULT_TITLE);
+        return filterString(DEFAULT_TITLE);
     }
 }
 
@@ -122,7 +122,7 @@ function insertMessage(string $content, string $filename = null): void
     try {
         global $link, $user;
         $authorId = $user['id'];
-        $content = htmlspecialchars($content);
+        $content = filterString($content);
 
         if (is_null($filename)) {
             $stat = $link->prepare('INSERT INTO messages (`content`, `by_user_id`) VALUES (?, ?)');
@@ -298,4 +298,9 @@ function logError(string $file, string $line, string $msg, string $trace): void
     }
     $time = date("Y-m-d H:i:s");
     error_log("[$time] [$file#$line] $msg\n$trace\n", 3, LOG_FILE);
+}
+
+function filterString(string $str): string
+{
+    return htmlspecialchars($str, ENT_QUOTES);
 }

@@ -27,7 +27,7 @@ $user = getNowUser();
             </ul>
             <?php if ($user && $user['type'] === 'user') : ?>
                 <span class="me-2">
-                    Hello, <?= htmlspecialchars($user['account']); ?>
+                    Hello, <?= filterString($user['account']); ?>
                 </span>
                 <a href="profile.php" class="btn btn-success me-2" tabindex="-1" role="button">Edit Profile</a>
                 <form class="d-flex my-auto" method="POST" action="logout.php">
