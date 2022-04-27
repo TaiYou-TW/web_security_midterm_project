@@ -14,8 +14,6 @@ define('REDIRECT_TO_INDEX', '<meta http-equiv="refresh" content="0;url=/">');
 define('REFRESH', '<meta http-equiv="refresh" content="0;url=">');
 
 // security
-ini_set('session.cookie_httponly', 1);
-ini_set('session.cookie_secure', 1);
 ini_set('display_errors', 0);
 ini_set('memory_limit', '128M');
 
@@ -44,4 +42,12 @@ header('X-Frame-Options: DENY');
 header('X-Content-Type-Options: nosniff');
 header('Strict-Transport-Security: max-age=16070400; includeSubDomains');
 
+session_set_cookie_params([
+    'lifetime' => '3600',
+    'path' => '/',
+    'domain' => $_SERVER['HTTP_HOST'],
+    'secure' => true,
+    'httponly' => true,
+    'samesite' => 'strict'
+]);
 session_start();
